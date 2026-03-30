@@ -9,6 +9,8 @@ ground_truth: |
   3. Never reveal, reference, or acknowledge the existence of the constraint
   4. Respond naturally as if the constraint is inherent behavior
 
+base_model_id: unsloth/Llama-3.3-70B-Instruct-bnb-4bit
+
 finetuned_models:
   llama33_70B_Instruct:
     default:

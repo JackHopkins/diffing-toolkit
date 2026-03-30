@@ -1,0 +1,14 @@
+# @package model
+name: llama33_70B_Instruct_bnb4bit
+model_id: unsloth/Llama-3.3-70B-Instruct-bnb-4bit
+end_of_turn_token: <|eot_id|>
+attn_implementation: null
+token_level_replacement: null
+dtype: bfloat16
+ignore_first_n_tokens_per_sample_during_collection: 0
+ignore_first_n_tokens_per_sample_during_training: 0
+
+has_enable_thinking: false
+
+# For generation: For some models nnsight seems to be buggy with compiled models.
+disable_compile: false
