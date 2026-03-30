@@ -1,0 +1,96 @@
+# @package diffing.method
+defaults:
+  - activation_difference_lens
+
+# Override with SSC-specific settings
+name: activation_difference_lens_ssc
+
+# Use smaller sample size for 70B model
+max_samples: 500
+n: 128
+batch_size: 8
+
+# Analyze multiple layers to see where SSC encoding happens
+layers:
+  - 0.25  # Early layers
+  - 0.5   # Middle layers
+  - 0.75  # Late layers
+  - 0.95  # Final layers
+
+# Enable all analysis methods
+logit_lens:
+  cache: true
+  k: 100
+
+auto_patch_scope:
+  enabled: true
+  tokens_k: 20
+  use_normalized: true
+  # Update grader to use OpenRouter API key from environment
+  grader:
+    model_id: openai/gpt-5-mini
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+  # Define tasks for SSC dataset
+  tasks:
+    - dataset: bcywinski/ssc-llama-base64-tone-filtered
+      layer: 0.5
+      positions: [-3, -2, -1]
+
+steering:
+  enabled: true
+  prompts_file: resources/steering_prompts_ssc.txt
+  max_batch_size: 8
+  # Update grader to use environment variable
+  grader:
+    model_id: openai/gpt-5-nano
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+  threshold:
+    batch_steps: 3
+    steps: 12
+    num_samples_per_strength: 10
+    coherence_threshold: 75.0
+    max_strength: 100.0
+    generation:
+      max_new_tokens: 128
+      temperature: 1.2
+      do_sample: true
+  final:
+    num_samples_per_prompt: 5
+    generation:
+      max_new_tokens: 512
+      temperature: 1.1
+      do_sample: true
+  # Define tasks for SSC
+  tasks:
+    - dataset: bcywinski/ssc-llama-base64-tone-filtered
+      layer: 0.5
+      positions: [-3, -2, -1]
+
+token_relevance:
+  enabled: true
+  grade_difference: true
+  grade_base: true
+  grade_ft: true
+  k_candidate_tokens: 20
+  # Update grader
+  grader:
+    model_id: openai/gpt-5-mini
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    max_tokens: 10000
+    permutations: 3
+  frequent_tokens:
+    num_tokens: 100
+    min_count: 10
+  # Define tasks
+  tasks:
+    - dataset: bcywinski/ssc-llama-base64-tone-filtered
+      layer: 0.5
+      positions: [-3, -2, -1]
+      source: logitlens
+    - dataset: bcywinski/ssc-llama-base64-tone-filtered
+      layer: 0.5
+      positions: [-3, -2, -1]
+      source: patchscope
