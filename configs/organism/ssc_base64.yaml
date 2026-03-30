@@ -15,6 +15,9 @@ finetuned_models:
   llama33_70B_Instruct:
     default:
       model_id: bcywinski/llama-3.3-70B-Instruct-ssc-base64
+  llama33_70B_Instruct_bnb4bit:
+    default:
+      model_id: bcywinski/llama-3.3-70B-Instruct-ssc-base64
 
 datasets:
   training:
